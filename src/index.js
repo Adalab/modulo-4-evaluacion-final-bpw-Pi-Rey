@@ -37,9 +37,11 @@ server.get("/list", async (req, res) => {
       success: true,
       results: result,
     });
-    
   } catch (error) {
-    res.status(400).json(error);
+    res.status(400).json({
+      success: false,
+      results: error,
+    });
   }
 });
 
@@ -68,7 +70,7 @@ server.post("/add", async (req, res) => {
         res.status(200).json({
           success: true,
           message: "Canción introducida, el artista ya existía.",
-          result: newSong
+          result: newSong,
         });
       } else {
         const sqlInsertArtist =
@@ -83,13 +85,16 @@ server.post("/add", async (req, res) => {
         res.status(200).json({
           success: true,
           message: "Canción y artista introducidos.",
-          result: newSong
+          result: newSong,
         });
       }
       await conn.end();
     }
   } catch (error) {
-    res.status(400).json(error);
+    res.status(400).json({
+      success: false,
+      message: error,
+    });
   }
 });
 

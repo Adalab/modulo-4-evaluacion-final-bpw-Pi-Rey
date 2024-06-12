@@ -13,14 +13,17 @@
     <form action="">
 
         <label for="song">Nombre de la canción</label>
-        <input type="text" name="song" id="song">
+        <input class="js-input-song" type="text" name="song" id="song">
 
         <label for="artist">Nombre del artista</label>
-        <input type="text" name="artist" id="artist">
+        <input class="js-input-artist" type="text" name="artist" id="artist">
 
         <label for="country">País de origen del artista</label>
-        <input type="text" name="country" id="country">
+        <input class="js-input-country" type="text" name="country" id="country">
+
+        <input class="js-btn-add" type="submit" value="Añadir">
     </form>
+    <p class="js-res-add" ></p>
 
 <button class="btn-show-all">Mostrar el listado con las canciones</button>
     <div class="js-items"></div>
