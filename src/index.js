@@ -25,6 +25,93 @@ async function connectDB() {
   return connex;
 }
 
+
+
+//BONUS:
+const generateToken = (payload) => {
+    const token = jwt.sign(payload, process.env.JWT_WORD, { expiresIn: "1h" });
+    return token;
+  };
+  
+  const authorize = (req, res, next) =>{
+      const tokenString = req.headers.authorization;
+      if (!tokenString) { 
+        res.status(400).json({ success: false, message: "No estás autorizado." });
+      } else {
+        try {
+          const token = tokenString.split(" ")[1]; 
+          const verifiedToken = jwt.verify(token, process.env.JWT_WORD);
+          req.userInfo = verifiedToken;
+        } catch (error) {
+          res.status(400).json({ success: false, message: error });
+        }
+        next();
+      }
+  }
+  //1. Sign-up
+  server.post("/user/signup", async (req, res) => {
+    try {
+      const { email, name, password } = req.body;
+      const conn = await connectDB();
+      const selectEmail = "SELECT * FROM users WHERE email = ?;";
+      const [result] = await conn.query(selectEmail, [email]);
+      if (result.length === 0) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+  
+        const insertUser =
+          "INSERT INTO users (email, name, password) VALUES (?,?, ?)";
+        const [newUser] = await conn.query(insertUser, [
+          email,
+          name,
+          hashedPassword,
+        ]);
+  
+        //hasta aquí he registrado al newUser
+        //a continuación voy a darle un token:
+  
+        const infoToken = { email: email, id: newUser.insertId };
+        const newToken = generateToken(infoToken);
+  
+        res.status(201).json({ success: true, token: newToken });
+      } else {
+        res.status(200).json({ success: false, message: "El usuario ya existe" });
+      }
+      await conn.end();
+    } catch (error) {
+      res.status(400).json(error);
+    }
+  });
+  
+  //2. Login
+  server.post("/user/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const conn = await connectDB();
+      const selectEmail = "SELECT * FROM users WHERE email = ?;";
+      const [result] = await conn.query(selectEmail, [email]);
+      if (result.length !== 0) {
+        const isSamePassword = await bcrypt.compare(password, result[0].password);
+        if (isSamePassword) {
+          const infoToken = { email: result[0].email, id: result[0].idUser };
+          const token = generateToken(infoToken);
+          res.status(201).json({
+            success: true,
+            token: token,
+          });
+        } else {
+          res
+            .status(400)
+            .json({ success: false, message: "contraseña incorrecta" });
+        }
+      } else {
+        res.status(400).json({ success: false, message: "email incorrecto" });
+      }
+      await conn.end();
+    } catch (error) {
+      res.status(400).json(error);
+    }
+  });
+
 //Endpoints:
 //1. mostrar todo:
 server.get("/list", async (req, res) => {
@@ -48,7 +135,7 @@ server.get("/list", async (req, res) => {
 });
 
 //2. insert:
-server.post("/add", async (req, res) => {
+server.post("/add", authorize, async (req, res) => {
   try {
     const conn = await connectDB();
     const { songName, name, country } = req.body;
@@ -103,7 +190,7 @@ server.post("/add", async (req, res) => {
 });
 
 //3. delete song
-server.delete("/delete/:id", async (req, res) => {
+server.delete("/delete/:id", authorize, async (req, res) => {
   try {
     const idDelete = req.params.id;
     const conn = await connectDB();
@@ -123,7 +210,7 @@ server.delete("/delete/:id", async (req, res) => {
 });
 
 //4. update song
-server.put("/update/:id", async (req, res) => {
+server.put("/update/:id", authorize, async (req, res) => {
   try {
     const idUpdate = req.params.id;
     const { song, album } = req.body;
@@ -193,74 +280,18 @@ server.get("/:id", async (req, res) => {
   }
 });
 
-//BONUS:
-const generateToken = (payload) => {
-  const token = jwt.sign(payload, process.env.JWT_WORD, { expiresIn: "1h" });
-  return token;
-};
-//1. Sign-up
-server.post("/user/signup", async (req, res) => {
-  try {
-    const { email, name, password } = req.body;
-    const conn = await connectDB();
-    const selectEmail = "SELECT * FROM users WHERE email = ?;";
-    const [result] = await conn.query(selectEmail, [email]);
-    if (result.length === 0) {
-      const hashedPassword = await bcrypt.hash(password, 10);
+//BONUS - logout
+server.put("/user/logout", function (req, res) {
+    const tokenString = req.headers.authorization;
+    jwt.sign(tokenString, "", { expiresIn: 1 } , (logout, err) => {
+       if (logout) {
+          res.send({msg : 'Has sido desconectado' });
+       } else {
+          res.send({msg:'Error'});
+       }
+    });
+ });
 
-      const insertUser =
-        "INSERT INTO users (email, name, password) VALUES (?,?, ?)";
-      const [newUser] = await conn.query(insertUser, [
-        email,
-        name,
-        hashedPassword,
-      ]);
-
-      //hasta aquí he registrado al newUser
-      //a continuación voy a darle un token:
-
-      const infoToken = { email: email, id: newUser.insertId };
-      const newToken = generateToken(infoToken);
-
-      res.status(201).json({ success: true, token: newToken });
-    } else {
-      res.status(200).json({ success: false, message: "El usuario ya existe" });
-    }
-    await conn.end();
-  } catch (error) {
-    res.status(400).json(error);
-  }
-});
-
-//2. Login
-server.post("/user/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const conn = await connectDB();
-    const selectEmail = "SELECT * FROM users WHERE email = ?;";
-    const [result] = await conn.query(selectEmail, [email]);
-    if (result.length !== 0) {
-      const isSamePassword = await bcrypt.compare(password, result[0].password);
-      if (isSamePassword) {
-        const infoToken = { email: result[0].email, id: result[0].idUser };
-        const token = generateToken(infoToken);
-        res.status(201).json({
-          success: true,
-          token: token,
-        });
-      } else {
-        res
-          .status(400)
-          .json({ success: false, message: "contraseña incorrecta" });
-      }
-    } else {
-      res.status(400).json({ success: false, message: "email incorrecto" });
-    }
-    await conn.end();
-  } catch (error) {
-    res.status(400).json(error);
-  }
-});
 
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
