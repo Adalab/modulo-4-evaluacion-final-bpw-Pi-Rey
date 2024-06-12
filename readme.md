@@ -44,6 +44,8 @@ Gracias al servidor estático almacenado en ./public, tenemos un frontend que fa
 - agregar canciones
 - pintar la lista de canciones
 
+https://github.com/Adalab/modulo-4-evaluacion-final-bpw-Pi-Rey/blob/de103d76878259b24385c5f5eefa58b335c2b430/images/image.png
+
 Para el resto de interaciones, te dejo en buenas manos con Postman :)
 
 Una última cosa... hay algunos endpoints que son rutas protegidas así que recuerda "tener la sesión iniciada" y el token a mano si quieres: 
