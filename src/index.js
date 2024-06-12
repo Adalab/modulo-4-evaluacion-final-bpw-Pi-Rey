@@ -194,13 +194,11 @@ server.get("/:id", async (req, res) => {
 });
 
 //BONUS:
-
 const generateToken = (payload) => {
   const token = jwt.sign(payload, process.env.JWT_WORD, { expiresIn: "1h" });
   return token;
 };
 //1. Sign-up
-
 server.post("/user/signup", async (req, res) => {
   try {
     const { email, name, password } = req.body;
@@ -224,9 +222,39 @@ server.post("/user/signup", async (req, res) => {
       const infoToken = { email: email, id: newUser.insertId };
       const newToken = generateToken(infoToken);
 
-      res.status(201).json({ success: true, token: newToken});
+      res.status(201).json({ success: true, token: newToken });
     } else {
       res.status(200).json({ success: false, message: "El usuario ya existe" });
+    }
+    await conn.end();
+  } catch (error) {
+    res.status(400).json(error);
+  }
+});
+
+//2. Login
+server.post("/user/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const conn = await connectDB();
+    const selectEmail = "SELECT * FROM users WHERE email = ?;";
+    const [result] = await conn.query(selectEmail, [email]);
+    if (result.length !== 0) {
+      const isSamePassword = await bcrypt.compare(password, result[0].password);
+      if (isSamePassword) {
+        const infoToken = { email: result[0].email, id: result[0].idUser };
+        const token = generateToken(infoToken);
+        res.status(201).json({
+          success: true,
+          token: token,
+        });
+      } else {
+        res
+          .status(400)
+          .json({ success: false, message: "contraseña incorrecta" });
+      }
+    } else {
+      res.status(400).json({ success: false, message: "email incorrecto" });
     }
     await conn.end();
   } catch (error) {
