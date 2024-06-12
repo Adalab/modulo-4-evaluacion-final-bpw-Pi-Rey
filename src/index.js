@@ -32,10 +32,12 @@ server.get("/list", async (req, res) => {
       "SELECT songName, name, country, album FROM song INNER JOIN artist ON IdArtist = fkArtist;";
     const [result] = await conn.query(select);
     await conn.end();
+    console.log(result);
     res.status(200).json({
       success: true,
       results: result,
     });
+    
   } catch (error) {
     res.status(400).json(error);
   }
@@ -185,3 +187,5 @@ server.get("/:id", async (req, res) => {
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
+server.use(express.static("./public"));
