@@ -34,7 +34,7 @@ const generateToken = (payload) => {
   };
   
   const authorize = (req, res, next) =>{
-      const tokenString = req.headers.authorization;
+      const tokenString = req.headers.Authorization;
       if (!tokenString) { 
         res.status(400).json({ success: false, message: "No estás autorizado." });
       } else {
@@ -78,7 +78,9 @@ const generateToken = (payload) => {
       }
       await conn.end();
     } catch (error) {
-      res.status(400).json(error);
+      res.status(400).json(
+        {success: false,
+        message: error});
     }
   });
   
@@ -121,7 +123,7 @@ server.get("/list", async (req, res) => {
       "SELECT songName, name, country, album FROM song INNER JOIN artist ON IdArtist = fkArtist ORDER BY name;";
     const [result] = await conn.query(select);
     await conn.end();
-    console.log(result);
+    //console.log(result);
     res.status(200).json({
       success: true,
       results: result,
@@ -135,7 +137,7 @@ server.get("/list", async (req, res) => {
 });
 
 //2. insert:
-server.post("/add", authorize, async (req, res) => {
+server.post("/add", async (req, res) => {
   try {
     const conn = await connectDB();
     const { songName, name, country } = req.body;

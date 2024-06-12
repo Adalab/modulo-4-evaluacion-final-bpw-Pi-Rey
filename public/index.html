@@ -1,34 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Perreo intenso</title>
-</head>
-<body>
-    <h2>Crea tu lista de temazos de reggaeton y...
-    </h2>
+  </head>
+  <body>
+    <h2>Crea tu lista de temazos de reggaeton y...</h2>
     <h1>perrea hasta abajo!</h1>
 
+    <section>
+      <fieldset>
+        <h3>Regístrate</h3>
+        <form action="">
+          <label for="email">Introduce tu email</label>
+          <input class="js-input-signup-email" type="text" name="email" id="email" />
+
+          <label for="name">Introduce tu nombre</label>
+          <input class="js-input-signup-name" type="text" name="name" id="name" />
+
+          <label for="pass">Introduce tu contraseña</label>
+          <input class="js-input-signup-pass" type="password" name="pass" id="pass" />
+
+          <input class="js-btn-signup" type="submit" value="Registro">
+        </form>
+        <p class="js-res-sign"></p>
+      </fieldset>
+    </section>
+    <section>
+      <fieldset>
+        <h3>Inicia sesión</h3>
+        <form action="">
+          <label for="emaillogin">Introduce tu email</label>
+          <input class="js-input-login-email" type="text" name="emaillogin" id="emaillogin" />
+
+          <label for="passlogin">Introduce tu contraseña</label>
+          <input class="js-input-login-pass" type="passwordlogin" name="passlogin" id="passlogin" />
+
+          <input class="js-btn-login" type="submit" value="Iniciar sesión">
+        </form>
+        <p class="js-res-login"></p>
+      </fieldset>
+    </section>
+    <br />
     <form action="">
+      <label for="song">Nombre de la canción</label>
+      <input class="js-input-song" type="text" name="song" id="song" />
 
-        <label for="song">Nombre de la canción</label>
-        <input class="js-input-song" type="text" name="song" id="song">
+      <label for="artist">Nombre del artista</label>
+      <input class="js-input-artist" type="text" name="artist" id="artist" />
 
-        <label for="artist">Nombre del artista</label>
-        <input class="js-input-artist" type="text" name="artist" id="artist">
+      <label for="country">País de origen del artista</label>
+      <input class="js-input-country" type="text" name="country" id="country" />
 
-        <label for="country">País de origen del artista</label>
-        <input class="js-input-country" type="text" name="country" id="country">
-
-        <input class="js-btn-add" type="submit" value="Añadir">
+      <input class="js-btn-add" type="submit" value="Añadir" />
     </form>
-    <p class="js-res-add" ></p>
+    <p class="js-res-add"></p>
 
-<button class="btn-show-all">Mostrar el listado con las canciones</button>
+    <button class="btn-show-all">Mostrar el listado con las canciones</button>
     <div class="js-items"></div>
 
     <!-- ev. meter lo de update el album-->
     <script src="./js/main.js"></script>
-</body>
+  </body>
 </html>

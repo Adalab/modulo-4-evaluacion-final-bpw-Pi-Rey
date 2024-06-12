@@ -24,4 +24,20 @@ SELECT songName, name, country FROM song INNER JOIN artist ON IdArtist = fkArtis
 SELECT * FROM song INNER JOIN artist WHERE IdArtist = fkArtist;
 
 DELETE FROM song WHERE idSong = 10;
-UPDATE song SET songName = 
+UPDATE song SET songName = "Gasolina", album = "Barrio Fino" WHERE idSong = 5;
+
+SELECT songName, name, country, album FROM song INNER JOIN artist ON IdArtist = fkArtist WHERE idSong = 13;
+
+SELECT songName, name, country, album FROM song INNER JOIN artist ON IdArtist = fkArtist WHERE name = "Plan B";
+
+CREATE TABLE users (
+idUser INT PRIMARY KEY AUTO_INCREMENT,
+email VARCHAR(100) UNIQUE NOT NULL,
+name VARCHAR(45) NOT NULL,
+address VARCHAR(100),
+password VARCHAR(255) NOT NULL
+);
+
+INSERT INTO users (email, name, password) VALUES ('donomar@gmail.com','Don Omar', '123');
+
+SELECT * FROM reggaeton.users;

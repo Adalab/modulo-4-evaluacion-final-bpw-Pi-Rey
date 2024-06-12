@@ -7,10 +7,82 @@ const inputSong = document.querySelector(".js-input-song");
 const inputArtist = document.querySelector(".js-input-artist");
 const inputCountry = document.querySelector(".js-input-country");
 const confirmation = document.querySelector(".js-res-add");
+const nameSignup = document.querySelector(".js-input-signup-name");
+const emailSignup = document.querySelector(".js-input-signup-email");
+const passSignup = document.querySelector(".js-input-signup-pass");
+const btnSignup = document.querySelector(".js-btn-signup");
+const confSign = document.querySelector(".js-res-sign");
+const emailLogin = document.querySelector(".js-input-login-email");
+const passLogin = document.querySelector(".js-input-login-pass");
+const btnLogin = document.querySelector(".js-btn-login");
+const confLogin = document.querySelector(".js-res-login");
 
-//para pintar la respuesta del server.get /list
+let token = "";
+//registro y login
 
-//función pa que lo pinte relativamente bien
+const handleSignUp = (ev) => {
+  ev.preventDefault();
+
+  const signupValues = {
+    email: emailSignup.value,
+    name: nameSignup.value,
+    password: passSignup.value,
+  };
+  fetch("http://localhost:3002/user/signup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(signupValues),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        confSign.innerHTML = "Has sido registrada!";
+        token = data.token;
+        emailSignup.value = "";
+        nameSignup.value = "";
+        passSignup.value = "";
+        console.log(token);
+      } else {
+        confSign.innerHTML = data.message;
+      }
+    });
+};
+
+btnSignup.addEventListener("click", handleSignUp);
+
+const handleLogin = (ev) => {
+  ev.preventDefault();
+
+  const LoginValues = {
+    email: emailLogin.value,
+    password: passLogin.value,
+  };
+  fetch("http://localhost:3002/user/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(LoginValues),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        confLogin.innerHTML = "Bienvenida de nuevo <3";
+        token = data.token;
+        emailLogin.value = "";
+        passLogin.value = "";
+        console.log(token);
+      } else {
+        confSign.innerHTML = data.message;
+      }
+    });
+};
+
+btnLogin.addEventListener("click", handleLogin);
+
+//función para que pinte la lista de canciones relativamente bien
 const renderList = (arr) => {
   let html = "";
   arr.forEach((item) => {
@@ -61,9 +133,11 @@ const handleAdd = (ev) => {
       confirmation.innerHTML = data.message;
       if (data.success) {
         fetchGetList();
+        inputSong.value = "";
+        inputArtist.value = "";
+        inputCountry.value = "";
       }
     });
-    
 };
 
 btnAdd.addEventListener("click", handleAdd);
