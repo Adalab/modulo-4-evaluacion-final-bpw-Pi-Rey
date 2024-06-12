@@ -29,7 +29,7 @@ server.get("/list", async (req, res) => {
   try {
     const conn = await connectDB();
     const select =
-      "SELECT songName, name, country, album FROM song INNER JOIN artist ON IdArtist = fkArtist;";
+      "SELECT songName, name, country, album FROM song INNER JOIN artist ON IdArtist = fkArtist ORDER BY name;";
     const [result] = await conn.query(select);
     await conn.end();
     console.log(result);
@@ -56,7 +56,7 @@ server.post("/add", async (req, res) => {
     if (song.length !== 0) {
       res.status(200).json({
         success: false,
-        message: "La canción que intentas introducir ya existe",
+        message: "La canción que intentas introducir ya existe.",
       });
       //   console.log(fkArtist);
     } else {
@@ -69,7 +69,7 @@ server.post("/add", async (req, res) => {
         const [newSong] = await conn.query(sqlInsertSong, [songName, fkArtist]);
         res.status(200).json({
           success: true,
-          message: "Canción introducida, el artista ya existía.",
+          message: "Canción introducida, el artista ya existía. Se muestra la lista actualizada.",
           result: newSong,
         });
       } else {
@@ -84,7 +84,7 @@ server.post("/add", async (req, res) => {
         ]);
         res.status(200).json({
           success: true,
-          message: "Canción y artista introducidos.",
+          message: "Canción y artista introducidos. Se muestra la lista actualizada.",
           result: newSong,
         });
       }

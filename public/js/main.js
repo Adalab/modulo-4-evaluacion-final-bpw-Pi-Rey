@@ -19,8 +19,7 @@ const renderList = (arr) => {
   list.innerHTML = html;
 };
 
-const handleClick = (ev) => {
-  ev.preventDefault();
+const fetchGetList = () => {
   fetch("http://localhost:3002/list")
     .then((response) => response.json())
     .then((data) => {
@@ -30,6 +29,10 @@ const handleClick = (ev) => {
       const tempArray = data.results;
       renderList(tempArray);
     });
+};
+const handleClick = (ev) => {
+  ev.preventDefault();
+  fetchGetList();
 };
 
 btnShowAll.addEventListener("click", handleClick);
@@ -56,7 +59,11 @@ const handleAdd = (ev) => {
     .then((response) => response.json())
     .then((data) => {
       confirmation.innerHTML = data.message;
+      if (data.success) {
+        fetchGetList();
+      }
     });
+    
 };
 
 btnAdd.addEventListener("click", handleAdd);
