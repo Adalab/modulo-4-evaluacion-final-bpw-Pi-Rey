@@ -44,22 +44,48 @@ server.get("/list", async (req, res) => {
 //2. insert:
 server.post("/add", async (req, res) => {
   try {
-    const { songName, name, country } = req.body;
     const conn = await connectDB();
-    const sqlInsertArtist =
-      "INSERT INTO `reggaeton`.`artist` (`name`, `country`) VALUES (?, ?);";
-    const [newArtist] = await conn.query(sqlInsertArtist, [name, country]);
-    const sqlInsertSong =
-      "INSERT INTO `reggaeton`.`song` (`songName`, `fkArtist`) VALUES (?, ?);";
-    const [newSong] = await conn.query(sqlInsertSong, [
-      songName,
-      newArtist.insertId,
-    ]);
-    res.status(200).json({
-      success: true,
-      result: newSong, //tengo que hacer validaciones de si ya existe el nombre de la cancion y si existe el grupo para ev. coger su id como clave foránea
-    });
-    await conn.end();
+    const { songName, name, country } = req.body;
+    //consulta sobre si existe ya la canción
+    const getSong = "SELECT * FROM song WHERE songName = ?;";
+    const [song] = await conn.query(getSong, [songName]);
+    if (song.length !== 0) {
+      res.status(200).json({
+        success: false,
+        message: "La canción que intentas introducir ya existe",
+      });
+      //   console.log(fkArtist);
+    } else {
+      const getArtist = "SELECT * FROM artist WHERE name = ?;";
+      const [artist] = await conn.query(getArtist, [name]);
+      if (artist.length !== 0) {
+        const fkArtist = artist[0].IdArtist;
+        const sqlInsertSong =
+          "INSERT INTO `reggaeton`.`song` (`songName`, `fkArtist`) VALUES (?, ?);";
+        const [newSong] = await conn.query(sqlInsertSong, [songName, fkArtist]);
+        res.status(200).json({
+          success: true,
+          message: "Canción introducida, el artista ya existía.",
+          result: newSong
+        });
+      } else {
+        const sqlInsertArtist =
+          "INSERT INTO `reggaeton`.`artist` (`name`, `country`) VALUES (?, ?);";
+        const [newArtist] = await conn.query(sqlInsertArtist, [name, country]);
+        const sqlInsertSong =
+          "INSERT INTO `reggaeton`.`song` (`songName`, `fkArtist`) VALUES (?, ?);";
+        const [newSong] = await conn.query(sqlInsertSong, [
+          songName,
+          newArtist.insertId,
+        ]);
+        res.status(200).json({
+          success: true,
+          message: "Canción y artista introducidos.",
+          result: newSong
+        });
+      }
+      await conn.end();
+    }
   } catch (error) {
     res.status(400).json(error);
   }
