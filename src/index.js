@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 require("dotenv").config();
 
@@ -69,7 +71,8 @@ server.post("/add", async (req, res) => {
         const [newSong] = await conn.query(sqlInsertSong, [songName, fkArtist]);
         res.status(200).json({
           success: true,
-          message: "Canción introducida, el artista ya existía. Se muestra la lista actualizada.",
+          message:
+            "Canción introducida, el artista ya existía. Se muestra la lista actualizada.",
           result: newSong,
         });
       } else {
@@ -84,7 +87,8 @@ server.post("/add", async (req, res) => {
         ]);
         res.status(200).json({
           success: true,
-          message: "Canción y artista introducidos. Se muestra la lista actualizada.",
+          message:
+            "Canción y artista introducidos. Se muestra la lista actualizada.",
           result: newSong,
         });
       }
@@ -184,6 +188,47 @@ server.get("/:id", async (req, res) => {
         message: "No existe ninguna canción con ese id.",
       });
     }
+  } catch (error) {
+    res.status(400).json(error);
+  }
+});
+
+//BONUS:
+
+const generateToken = (payload) => {
+  const token = jwt.sign(payload, process.env.JWT_WORD, { expiresIn: "1h" });
+  return token;
+};
+//1. Sign-up
+
+server.post("/user/signup", async (req, res) => {
+  try {
+    const { email, name, password } = req.body;
+    const conn = await connectDB();
+    const selectEmail = "SELECT * FROM users WHERE email = ?;";
+    const [result] = await conn.query(selectEmail, [email]);
+    if (result.length === 0) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const insertUser =
+        "INSERT INTO users (email, name, password) VALUES (?,?, ?)";
+      const [newUser] = await conn.query(insertUser, [
+        email,
+        name,
+        hashedPassword,
+      ]);
+
+      //hasta aquí he registrado al newUser
+      //a continuación voy a darle un token:
+
+      const infoToken = { email: email, id: newUser.insertId };
+      const newToken = generateToken(infoToken);
+
+      res.status(201).json({ success: true, token: newToken});
+    } else {
+      res.status(200).json({ success: false, message: "El usuario ya existe" });
+    }
+    await conn.end();
   } catch (error) {
     res.status(400).json(error);
   }
