@@ -45,7 +45,6 @@ const handleSignUp = (ev) => {
         emailSignup.value = "";
         nameSignup.value = "";
         passSignup.value = "";
-        console.log(token);
       } else {
         confSign.innerHTML = data.message;
       }
@@ -135,8 +134,6 @@ const handleAdd = (ev) => {
   })
     .then((response) => response.json())
     .then((data) => {
-      
-      console.log(data.message)
       if (data.success) {
         confirmation.innerHTML = data.message;
         fetchGetList();

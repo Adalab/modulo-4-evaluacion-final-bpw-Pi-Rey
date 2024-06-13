@@ -21,7 +21,6 @@ async function connectDB() {
     database: "reggaeton",
   });
   await connex.connect();
-  //    console.log("conexion con la DB" + connex.threadId);
   return connex;
 }
 
@@ -43,7 +42,6 @@ const authorize = (req, res, next) => {
       next();
     } catch (error) {
       res.status(400).json({ success: false, message: "error" });
-      console.log(error)
     }
 
   }
@@ -147,7 +145,7 @@ server.post("/add", authorize, async (req, res) => {
         success: false,
         message: "La canción que intentas introducir ya existe.",
       });
-      //   console.log(fkArtist);
+
     } else {
       const getArtist = "SELECT * FROM artist WHERE name = ?;";
       const [artist] = await conn.query(getArtist, [name]);
