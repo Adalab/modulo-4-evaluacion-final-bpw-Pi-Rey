@@ -41,6 +41,7 @@ y nodemon si lo necesitas)
 Gracias al servidor estático almacenado en ./public, tenemos un frontend que facilita algunas de las interacciones del usuario con la API: 
 - registo de usuarios, 
 - inicio de sesión,
+- cierre de sesión,
 - agregar canciones
 - pintar la lista de canciones
 
@@ -49,6 +50,7 @@ Gracias al servidor estático almacenado en ./public, tenemos un frontend que fa
 Para el resto de interaciones, te dejo en buenas manos con Postman :)
 
 Una última cosa... hay algunos endpoints que son rutas protegidas así que recuerda "tener la sesión iniciada" y el token a mano si quieres: 
+- añadir
 - eliminar canciones
 - actualizar canciones (introducir su álbum)
 
@@ -71,7 +73,7 @@ Parámetros de entrada:
 "password": "contraseña"
 }
 
-### (EN CONSTRUCCIÓN) Cierre de Sesión
+### Cierre de Sesión
 Cierra la sesión actual del usuario con PUT /user/logout
 (recuerda poner el token del usuario en los headers!)
 
@@ -90,7 +92,7 @@ Parámetros de entrada:
 ### Elimina una canción por su ID con DELETE /delete/:id
 (No olvides pasar el id en la url!)
 
-### Actualiza los datos de una canción por su ID con PUT /update/:id
+### Actualiza el nombre de una canción y añade su álbum por su ID con PUT /update/:id
 Parámetros de entrada:
 {
 "song": "Nuevo Nombre de la Canción",

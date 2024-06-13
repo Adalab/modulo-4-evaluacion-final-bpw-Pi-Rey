@@ -14,49 +14,107 @@
         <h3>Regístrate</h3>
         <form action="">
           <label for="email">Introduce tu email</label>
-          <input class="js-input-signup-email" type="text" name="email" id="email" />
+          <input
+            class="js-input-signup-email"
+            type="text"
+            name="email"
+            id="email"
+            required
+          />
 
           <label for="name">Introduce tu nombre</label>
-          <input class="js-input-signup-name" type="text" name="name" id="name" />
+          <input
+            class="js-input-signup-name"
+            type="text"
+            name="name"
+            id="name"
+            required
+          />
 
           <label for="pass">Introduce tu contraseña</label>
-          <input class="js-input-signup-pass" type="password" name="pass" id="pass" />
+          <input
+            class="js-input-signup-pass"
+            type="password"
+            name="pass"
+            id="pass"
+            required
+          />
 
-          <input class="js-btn-signup" type="submit" value="Registro">
+          <input class="js-btn-signup" type="submit" value="Registro" />
         </form>
         <p class="js-res-sign"></p>
       </fieldset>
     </section>
     <section>
       <fieldset>
-        <h3>Inicia sesión</h3>
+        <h3>Inicia sesión y cierra sesión</h3>
         <form action="">
           <label for="emaillogin">Introduce tu email</label>
-          <input class="js-input-login-email" type="text" name="emaillogin" id="emaillogin" />
+          <input
+            class="js-input-login-email"
+            type="text"
+            name="emaillogin"
+            id="emaillogin"
+            required
+          />
 
           <label for="passlogin">Introduce tu contraseña</label>
-          <input class="js-input-login-pass" type="passwordlogin" name="passlogin" id="passlogin" />
+          <input
+            class="js-input-login-pass"
+            type="password"
+            name="passlogin"
+            id="passlogin"
+            required
+          />
 
-          <input class="js-btn-login" type="submit" value="Iniciar sesión">
+          <input class="js-btn-login" type="submit" value="Iniciar sesión" />
         </form>
+        <br>
+        <button class="js-btn-logout" >Cierra sesión</button>
         <p class="js-res-login"></p>
+        <p class="js-res-logout"></p>
       </fieldset>
     </section>
     <br />
-    <form action="">
-      <label for="song">Nombre de la canción</label>
-      <input class="js-input-song" type="text" name="song" id="song" />
 
-      <label for="artist">Nombre del artista</label>
-      <input class="js-input-artist" type="text" name="artist" id="artist" />
 
-      <label for="country">País de origen del artista</label>
-      <input class="js-input-country" type="text" name="country" id="country" />
 
-      <input class="js-btn-add" type="submit" value="Añadir" />
-    </form>
-    <p class="js-res-add"></p>
+    <fieldset>
+      <h4>
+        Introduce nuevas canciones. ¡Recuerda tener la sesión iniciada para
+        esto!
+      </h4>
+      <form action="">
+        <label for="song">Nombre de la canción</label>
+        <input
+          class="js-input-song"
+          type="text"
+          name="song"
+          id="song"
+          required
+        />
 
+        <label for="artist">Nombre del artista</label>
+        <input
+          class="js-input-artist"
+          type="text"
+          name="artist"
+          id="artist"
+          required
+        />
+
+        <label for="country">País de origen del artista</label>
+        <input
+          class="js-input-country"
+          type="text"
+          name="country"
+          id="country"
+        />
+
+        <input class="js-btn-add" type="submit" value="Añadir" />
+      </form>
+      <p class="js-res-add"></p>
+    </fieldset>
     <button class="btn-show-all">Mostrar el listado con las canciones</button>
     <div class="js-items"></div>
 

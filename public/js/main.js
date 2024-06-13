@@ -16,6 +16,8 @@ const emailLogin = document.querySelector(".js-input-login-email");
 const passLogin = document.querySelector(".js-input-login-pass");
 const btnLogin = document.querySelector(".js-btn-login");
 const confLogin = document.querySelector(".js-res-login");
+const btnLogout = document.querySelector(".js-btn-logout");
+const confLogout = document.querySelector(".js-res-logout");
 
 let token = "";
 //registro y login
@@ -71,9 +73,11 @@ const handleLogin = (ev) => {
       if (data.success) {
         confLogin.innerHTML = "Bienvenida de nuevo <3";
         token = data.token;
+        localStorage.setItem("token", token);
         emailLogin.value = "";
         passLogin.value = "";
-        console.log(token);
+     //   console.log(token);
+        confLogout.innerHTML = data.message;
       } else {
         confSign.innerHTML = data.message;
       }
@@ -125,19 +129,48 @@ const handleAdd = (ev) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Bearer " + localStorage.getItem("token"),
     },
     body: JSON.stringify(bodyParams),
   })
     .then((response) => response.json())
     .then((data) => {
-      confirmation.innerHTML = data.message;
+      
+      console.log(data.message)
       if (data.success) {
+        confirmation.innerHTML = data.message;
         fetchGetList();
         inputSong.value = "";
         inputArtist.value = "";
         inputCountry.value = "";
+      }else{
+        confirmation.innerHTML = "Ups, algo ha ido mal...";
       }
     });
 };
 
 btnAdd.addEventListener("click", handleAdd);
+
+
+const handleLogout = (ev) =>{
+    ev.preventDefault();
+
+    fetch("http://localhost:3002/user/logout", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+            confLogin.innerHTML = "";
+          confLogout.innerHTML = data.message;
+          if (data.success) {
+            localStorage.removeItem("token"); // Eliminar el token del almacenamiento local
+            token = ""; // Limpiar la variable token
+          }
+        });
+    };
+
+btnLogout.addEventListener("click", handleLogout);

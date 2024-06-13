@@ -40,10 +40,12 @@ const authorize = (req, res, next) => {
       const token = tokenString.split(" ")[1];
       const verifiedToken = jwt.verify(token, process.env.JWT_WORD);
       req.userInfo = verifiedToken;
+      next();
     } catch (error) {
-      res.status(400).json({ success: false, message: error });
+      res.status(400).json({ success: false, message: "error" });
+      console.log(error)
     }
-    next();
+
   }
 };
 //1. Sign-up
@@ -133,7 +135,7 @@ server.get("/list", async (req, res) => {
 });
 
 //2. insert:
-server.post("/add", async (req, res) => {
+server.post("/add", authorize, async (req, res) => {
   try {
     const conn = await connectDB();
     const { songName, name, country } = req.body;
@@ -279,20 +281,25 @@ server.get("/:id", async (req, res) => {
 });
 
 // //BONUS - logout
-// server.put("/user/logout", function (req, res) {
-//   try {
-//     const tokenString = req.headers.authorization;
-//     jwt.sign(tokenString, "", { expiresIn: 1 }, (logout, err) => {
-//       if (logout) {
-//         res.send({ msg: "Has sido desconectado" });
-//       } else {
-//         res.send({ msg: "Error" });
-//       }
-//     });
-//   } catch (error) {
-//     res.status(400).json(error);
-//   }
-// });
+server.put("/user/logout", function (req, res) {
+  try {
+    const tokenString = req.headers.authorization;
+    jwt.sign(tokenString, "", { expiresIn: 1 }, (logout, err) => {
+      if (logout) {
+        res.status(200).json({
+            success: true,
+            message: "Has sido desconectada" });
+      } else {
+        res.status(400).json({
+            success: false,
+            message: "Error al cerrar sesión",
+          });
+      }
+    });
+  } catch (error) {
+    res.status(400).json(error);
+  }
+});
 
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
